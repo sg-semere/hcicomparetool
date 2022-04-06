@@ -1,0 +1,8 @@
+java-api:
+  url: https://productrates-dev.sgproductsapis.com
+  context-path: /api/v1/rates
+
+mule-api:
+  url: http://sgi-ecom-proc-api-uat.us-e1.cloudhub.io
+  context-path: /api/v1/ecom/rates
+  
