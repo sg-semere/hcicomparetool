@@ -2,8 +2,11 @@ package hci.compare.rates;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.Map.Entry;
 
 import hci.compare.rates.entity.ProductRateDetails;
 import hci.compare.rates.entity.RatesResponseTemplet;
@@ -79,66 +82,89 @@ public class CompareController {
     }
 
     @GetMapping("/compare")
-    public Object[] getCompare(@RequestParam String saleDate, String vin, String dealerCode,
-                               @RequestParam(required = false) String odometer, @RequestParam(required = false) String vehicleCondition) {
+	public Object[] getCompare(@RequestParam String saleDate, String vin, String dealerCode,
+			@RequestParam(required = false) String odometer, @RequestParam(required = false) String vehicleCondition) {
 
-        ProductRateDetails[] javaApiData = getJavaApiData(saleDate, vin, dealerCode, odometer, vehicleCondition);
-        ProductRateDetails[] muleApi = getMuleApiData(saleDate, vin, dealerCode, odometer, vehicleCondition);
+		ProductRateDetails[] javaApiData = getJavaApiData(saleDate, vin, dealerCode, odometer, vehicleCondition);
+		ProductRateDetails[] muleApiData = getMuleApiData(saleDate, vin, dealerCode, odometer, vehicleCondition);
 
-        Set<String> allJavaSku = new TreeSet<String>();
-        Set<String> allMuleSku = new TreeSet<String>();
-        ArrayList<ResultClass> resultArray = new ArrayList<>();
+		ArrayList<Object> resultArray = new ArrayList<Object>();
+		Map<String, String> responseMap = new TreeMap<>();
+		ArrayList<String> allJavaSku = new ArrayList<String>();
+		ArrayList<String> allMuleSku = new ArrayList<String>();
 
-        Object[] array = null;
+		Object[] array = null;
+		String productSkuMuleApi = null;
+		int i, j = 0;
 
-        for (int i = 0; i <= javaApiData.length - 1; i++) {
-            String productSkuJavaApi = javaApiData[i].getProductSku();
-            allJavaSku.add(productSkuJavaApi);
+		for (i = 0; i <= javaApiData.length - 1; i++) {
+			String productSkuJavaApi = javaApiData[i].getProductSku();
+			allJavaSku.add(javaApiData[i].getProductSku());
 
-            for (int j = 0; j <= muleApi.length - 1; j++) {
-                String productSkuMuleApi = muleApi[j].getProductSku();
-                allMuleSku.add(productSkuMuleApi);
-                try {
-                    if (productSkuJavaApi.contentEquals(productSkuMuleApi)) {
-                        ResultClass result = new ResultClass();
-                        result.setProductSku_java(javaApiData[i].getProductSku());
-                        result.setDealerCost_java(javaApiData[i].getDealerCost());
-                        result.setMultiType_java(javaApiData[i].getMultiType());
-                        result.setFormNumber_java(javaApiData[i].getFormNumber());
-                        result.setRetailCost_java(javaApiData[i].getRetailCost());
+			for (j = 0; j <= muleApiData.length - 1; j++) {
+				productSkuMuleApi = muleApiData[j].getProductSku();
+				if (!allMuleSku.contains(productSkuMuleApi)) {
+					allMuleSku.add(muleApiData[j].getProductSku());
+				}
 
-                        result.setProductSku_mule(muleApi[j].getProductSku());
-                        result.setDealerCost_mule(muleApi[j].getDealerCost());
-                        result.setMultiType_mule(muleApi[j].getMultiType());
-                        result.setFormNumber_mule(muleApi[j].getFormNumber());
-                        result.setRetailCost_mule(muleApi[j].getRetailCost());
+				try {
+					if (productSkuJavaApi.contentEquals(productSkuMuleApi)) {
+						ResultClass result = new ResultClass();
+						result.setProductSku_java(javaApiData[i].getProductSku());
+						result.setDealerCost_java(javaApiData[i].getDealerCost());
+						result.setMultiType_java(javaApiData[i].getMultiType());
+						result.setFormNumber_java(javaApiData[i].getFormNumber());
+						result.setRetailCost_java(javaApiData[i].getRetailCost());
 
-                        result.setProductSku(result.getProductSku_java().contentEquals(result.getProductSku_mule()));
-                        result.setDealerCost(
-                                String.valueOf(Math.abs(Double.parseDouble(result.getDealerCost_java()))).contentEquals(
-                                        String.valueOf(Math.abs(Double.parseDouble(result.getDealerCost_mule())))));
-                        result.setMultiType(result.getMultiType_java().contentEquals(result.getMultiType_mule()));
-                        result.setFormNumber(result.getFormNumber_java().contentEquals(result.getFormNumber_mule()));
-                        result.setRetailCost(
-                                String.valueOf(Math.abs(Double.parseDouble(result.getRetailCost_java()))).contentEquals(
-                                        String.valueOf(Math.abs(Double.parseDouble(result.getRetailCost_mule())))));
+						result.setProductSku_mule(muleApiData[j].getProductSku());
+						result.setDealerCost_mule(muleApiData[j].getDealerCost());
+						result.setMultiType_mule(muleApiData[j].getMultiType());
+						result.setFormNumber_mule(muleApiData[j].getFormNumber());
+						result.setRetailCost_mule(muleApiData[j].getRetailCost());
 
-                        resultArray.add(result);
-                        j = muleApi.length - 1;
-                    } else {
-                        ResultClass result = new ResultClass();
-                        result.setProductSku_mule(productSkuMuleApi);
-                        result.setNot_Matched(productSkuMuleApi + " not matched with Java API");
-                        resultArray.add(result);
+						result.setProductSku(result.getProductSku_java().contentEquals(result.getProductSku_mule()));
+						result.setDealerCost(
+								String.valueOf(Math.abs(Double.parseDouble(result.getDealerCost_java()))).contentEquals(
+										String.valueOf(Math.abs(Double.parseDouble(result.getDealerCost_mule())))));
+						result.setMultiType(result.getMultiType_java().contentEquals(result.getMultiType_mule()));
+						result.setFormNumber(result.getFormNumber_java().contentEquals(result.getFormNumber_mule()));
+						result.setRetailCost(
+								String.valueOf(Math.abs(Double.parseDouble(result.getRetailCost_java()))).contentEquals(
+										String.valueOf(Math.abs(Double.parseDouble(result.getRetailCost_mule())))));
 
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        array = resultArray.toArray();
-        return array;
-    }
+						resultArray.add(result);
+						j = muleApiData.length - 1;
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		int javaObjectCount = javaApiData.length;
+		int muleObjectCount = muleApiData.length;
+
+		responseMap.put("java ProductRateDetails Count", String.valueOf(javaObjectCount));
+		responseMap.put("mule ProductRateDetails Count", String.valueOf(muleObjectCount));
+
+		if (javaObjectCount == muleObjectCount) {
+			boolean checkJavaWithMule = allMuleSku.containsAll(allJavaSku);
+			boolean checkMuleWithJava = allJavaSku.containsAll(allMuleSku);
+			if (checkJavaWithMule == true && checkMuleWithJava == true) {
+				responseMap.put("Extra Products: ",
+						" No Extra products all the products are matching with each other response..!");
+			}
+		} else {
+			for (int k = 0; k <= allMuleSku.size() - 1; k++) {
+				String mule = allMuleSku.get(k);
+				if (!allJavaSku.contains(mule)) {
+					responseMap.put(mule, " : not matched with any of the productSku of java API response.");
+				}
+			}
+		}
+		Set<Entry<String, String>> entrySet = responseMap.entrySet();
+		resultArray.addAll(entrySet);
+		array = resultArray.toArray();
+		return array;
+	}
 
 }

@@ -22,15 +22,6 @@ public class ResultClass {
 	 private String retailCost_mule;
 	 private boolean retailCost;
 	 
-	 private String not_Matched;
-	 
-	
-	public String getNot_Matched() {
-		return not_Matched;
-	}
-	public void setNot_Matched(String not_Matched) {
-		this.not_Matched = not_Matched;
-	}
 	public String getProductSku_java() {
 		return productSku_java;
 	}
