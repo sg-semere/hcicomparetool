@@ -139,10 +139,19 @@ public class CompareServiceImp implements CompareServiceInf {
                         "No Extra products all the products are matching with each other response..!");
             }
         } else {
-            for (int k = 0; k <= allMuleSku.size() - 1; k++) {
-                String mule = allMuleSku.get(k);
-                if (!allJavaSku.contains(mule)) {
-                    responseMap.put(mule, " : not matched with any of the productSku of java API response.");
+            if(javaObjectCount>muleObjectCount) {
+                for (int k = 0; k <= allJavaSku.size() - 1; k++) {
+                    String java = allJavaSku.get(k);
+                    if (!allMuleSku.contains(java)) {
+                        responseMap.put(java, " : not matched with any of the productSku of mule API response.");
+                    }
+                }
+            }else {
+                for (int k = 0; k <= allMuleSku.size() - 1; k++) {
+                    String mule = allMuleSku.get(k);
+                    if (!allJavaSku.contains(mule)) {
+                        responseMap.put(mule, " : not matched with any of the productSku of java API response.");
+                    }
                 }
             }
         }
