@@ -15,19 +15,19 @@ import java.util.*;
 public class CompareServiceImp implements CompareServiceInf {
 
     @Value("${mule-api.url}")
-    private String muleAPIUrl;
+    String muleAPIUrl;
 
     @Value("${mule-api.context-path}")
-    private String muleAPIContextPath;
+    String muleAPIContextPath;
 
     @Value("${java-api.url}")
-    private String javaAPIUrl;
+    String javaAPIUrl;
 
     @Value("${java-api.context-path}")
-    private String javaAPIContextPath;
+    String javaAPIContextPath;
 
     @Autowired
-    private RestTemplate restTemplate;
+    RestTemplate restTemplate;
 
     @Override
     public ProductRateDetails[] getJavaData(String saleDate, String vin, String dealerCode, String odometer, String vehicleCondition) {
