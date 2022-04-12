@@ -1,6 +1,8 @@
 name:  DEV build and deploy
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - main
 
 jobs:
   on-success:
@@ -10,8 +12,7 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v2
 
-      - run: echo "${{ env.ENV_CONFIG }} Branch - Job triggered by a ${{ github.event_name }} event"
-      - uses: ./.github/workflows/codeql-analysis.yml
+      - uses: ./.github/workflows/codeql-analysis.yml@main
         with:
           username: "semere"
 
