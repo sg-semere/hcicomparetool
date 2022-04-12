@@ -10,6 +10,7 @@ jobs:
     uses: ./.github/workflows/codeql.yml
   build:
     needs: code-scan
+    runs-on: ubuntu-latest
     steps:
       - run: echo "${{ env.ENV_CONFIG }} Branch - Job triggered by a ${{ github.event_name }} event"
 
