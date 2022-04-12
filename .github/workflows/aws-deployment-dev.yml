@@ -7,7 +7,7 @@ on:
 jobs:
   code-scan:
     name: Build app on Ubuntu
-    uses: ./.github/workflows/codeql.yml@main
+    uses: ./.github/workflows/codeql.yml
   build:
     needs: code-scan
     steps:
