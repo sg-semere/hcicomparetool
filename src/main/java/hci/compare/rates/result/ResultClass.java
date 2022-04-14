@@ -1,5 +1,7 @@
 package hci.compare.rates.result;
 
+import java.util.Set;
+
 public class ResultClass {
 
 	private String productSku_java;
@@ -21,7 +23,7 @@ public class ResultClass {
 	 private String retailCost_java;
 	 private String retailCost_mule;
 	 private boolean retailCost;
-	 
+
 	public String getProductSku_java() {
 		return productSku_java;
 	}
